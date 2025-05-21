@@ -1,6 +1,6 @@
 # Joplin MCP Server
 
-This is a Node.js implementation of an MCP (Model Context Protocol) server for Joplin.
+This is a TypeScript implementation of an MCP (Model Context Protocol) server for Joplin.
 
 ## Installation
 
@@ -15,6 +15,7 @@ Create a `.env` file with the following variables:
 ```
 JOPLIN_PORT=41184
 JOPLIN_TOKEN=your_joplin_token
+LOG_LEVEL=info
 ```
 
 You can find your Joplin token in the Joplin desktop app under:
@@ -24,9 +25,16 @@ Tools > Options > Web Clipper
 
 ### Local Development
 
-Start the server:
+Start the server in development mode:
 
 ```bash
+npm run dev
+```
+
+For production build:
+
+```bash
+npm run build
 npm start
 ```
 
@@ -98,26 +106,6 @@ Or using environment file:
   }
 }
 ```
-
-### Legacy Usage (if installed locally)
-
-Usage in Augment Code:
-name: `joplin`
-command: `node /path/to/your/mcp-joplin/index.js --env-file /path/to/your/mcp-joplin/.env`
-
-Usage in mcp.json (cursor other tools)
-```json
-  "joplin":{
-      "command":"node",
-      "args":[
-        "/path/to/your/mcp-joplin/index.js",
-        "--env-file",
-        "/path/to/your/mcp-joplin/.env"
-      ]
-  }
-```
-
-
 
 ### Logging
 
@@ -340,7 +328,8 @@ npm test
 To make this package available via npx:
 
 1. Update the version in `package.json`
-2. Run `npm publish`
+2. Run `npm run build` to compile TypeScript
+3. Run `npm publish`
 
 Users can then run it with `npx joplin-mcp-server`
 

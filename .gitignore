@@ -2,15 +2,7 @@ node_modules/
 .env
 .env.*
 !.env.example
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-package-lock.json
-
-# Logs
 logs/
+dist/
+.DS_Store
 *.log
-
-**/.claude/settings.local.json
-
-.idea/
