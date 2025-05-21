@@ -4,6 +4,9 @@
   "description": "MCP server for Joplin",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "joplin-mcp-server": "./bin/cli.js"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "node --test",

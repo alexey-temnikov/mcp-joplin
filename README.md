@@ -22,6 +22,8 @@ Tools > Options > Web Clipper
 
 ## Usage
 
+### Local Development
+
 Start the server:
 
 ```bash
@@ -33,6 +35,71 @@ You can also specify a custom environment file:
 ```bash
 npm start -- --env-file .env.custom
 ```
+
+### Using npx (Recommended)
+
+After publishing to npm, you can use npx to run the server without installation:
+
+```bash
+# Using command line arguments
+npx joplin-mcp-server --port 41184 --token your_joplin_token
+
+# Using environment file
+npx joplin-mcp-server --env-file /path/to/your/.env
+
+# Mixed approach (args override env file)
+npx joplin-mcp-server --env-file .env --port 41185
+```
+
+### Command Line Options
+
+```
+OPTIONS:
+  --env-file <file>    Load environment variables from file
+  --port <port>        Joplin port (default: 41184)
+  --token <token>      Joplin API token
+  --help, -h           Show help message
+```
+
+### MCP Client Configuration
+
+Usage in Augment Code:
+```
+name: joplin
+command: npx joplin-mcp-server --port 41184 --token your_token
+```
+
+Usage in mcp.json (Cursor and other tools):
+```json
+{
+  "joplin": {
+    "command": "npx",
+    "args": [
+      "joplin-mcp-server",
+      "--port",
+      "41184",
+      "--token",
+      "your_joplin_token"
+    ]
+  }
+}
+```
+
+Or using environment file:
+```json
+{
+  "joplin": {
+    "command": "npx",
+    "args": [
+      "joplin-mcp-server",
+      "--env-file",
+      "/path/to/your/.env"
+    ]
+  }
+}
+```
+
+### Legacy Usage (if installed locally)
 
 Usage in Augment Code:
 name: `joplin`
@@ -267,6 +334,15 @@ Create a `.env.test.local` file with your test configuration, then run:
 ```bash
 npm test
 ```
+
+### Publishing to npm
+
+To make this package available via npx:
+
+1. Update the version in `package.json`
+2. Run `npm publish`
+
+Users can then run it with `npx joplin-mcp-server`
 
 ## License
 

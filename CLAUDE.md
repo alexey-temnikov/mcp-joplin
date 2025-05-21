@@ -8,7 +8,11 @@ This is a Node.js MCP (Model Context Protocol) server for Joplin note-taking app
 
 ## Key Commands
 
-- **Start server**: `npm start`
+- **Start server locally**: `npm start`
+- **Start via npx**: 
+  - `npx joplin-mcp-server --port 41184 --token your_token`
+  - `npx joplin-mcp-server --env-file /path/to/.env`
+- **Get help**: `npx joplin-mcp-server --help`
 - **Run tests**: `npm test` (requires `.env.test.local` with test configuration)
 - **Individual tool tests**: 
   - `npm run test:search`

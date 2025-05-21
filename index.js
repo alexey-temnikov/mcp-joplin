@@ -15,13 +15,16 @@ import { ListNotebooks, SearchNotes, ReadNotebook, ReadNote, ReadMultiNote } fro
 // Parse command line arguments
 parseArgs();
 
+// Set default port if not specified
+if (!process.env.JOPLIN_PORT) {
+  process.env.JOPLIN_PORT = '41184';
+}
+
 // Check for required environment variables
-const requiredEnvVars = ['JOPLIN_PORT', 'JOPLIN_TOKEN'];
-for (const envVar of requiredEnvVars) {
-  if (!process.env[envVar]) {
-    console.error(`Error: ${envVar} environment variable is required`);
-    process.exit(1);
-  }
+if (!process.env.JOPLIN_TOKEN) {
+  process.stderr.write('Error: JOPLIN_TOKEN is required. Use --token <token> or set JOPLIN_TOKEN environment variable.\n');
+  process.stderr.write('Find your token in Joplin: Tools > Options > Web Clipper\n');
+  process.exit(1);
 }
 
 // Create the Joplin API client
@@ -124,9 +127,9 @@ if (!fs.existsSync(logsDir)) {
 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 const logFile = path.join(logsDir, `mcp-server-${timestamp}.log`);
 
-// Log server startup
-logger.info(`Starting MCP server (version ${server.version})`);
-logger.info(`Log file: ${logFile}`);
+// Log server startup (commented out for debugging)
+// logger.info(`Starting MCP server (version 1.0.0)`);
+// logger.info(`Log file: ${logFile}`);
 
 // Create a custom transport wrapper to log commands and responses
 class LoggingTransport extends StdioServerTransport {
@@ -143,8 +146,8 @@ class LoggingTransport extends StdioServerTransport {
       message
     };
 
-    // Log to console
-    logger.debug(`Sending response: ${JSON.stringify(message)}`);
+    // Log to console (commented out for debugging)
+    // logger.debug(`Sending response: ${JSON.stringify(message)}`);
 
     // Log to file
     fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
@@ -163,9 +166,9 @@ class LoggingTransport extends StdioServerTransport {
       message
     };
 
-    // Log to console
-    logger.info(`Received command #${this.commandCounter}: ${message.method || 'unknown method'}`);
-    logger.debug(`Command details: ${JSON.stringify(message)}`);
+    // Log to console (commented out for debugging)
+    // logger.info(`Received command #${this.commandCounter}: ${message.method || 'unknown method'}`);
+    // logger.debug(`Command details: ${JSON.stringify(message)}`);
 
     // Log to file
     fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
@@ -178,13 +181,13 @@ class LoggingTransport extends StdioServerTransport {
 // Start the server with logging transport
 const transport = new LoggingTransport();
 
-// Log connection status
-logger.info('Connecting to transport...');
+// Log connection status (commented out for debugging)
+// logger.info('Connecting to transport...');
 
 try {
   await server.connect(transport);
-  logger.info('MCP server started and ready to receive commands');
+  // logger.info('MCP server started and ready to receive commands');
 } catch (error) {
-  logger.error(`Failed to start MCP server: ${error.message}`);
+  process.stderr.write(`Failed to start MCP server: ${error.message}\n`);
   process.exit(1);
 }
