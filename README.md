@@ -317,10 +317,17 @@ Successfully retrieved: 3
 
 ### Running Tests
 
-Create a `.env.test.local` file with your test configuration, then run:
+Create a `.env.test.local` file with your test configuration (see `.env.test.example`), then run:
 
 ```bash
+# Run all unit tests
 npm test
+
+# Run individual test scripts
+npm run test:search
+npm run test:read-notebook
+npm run test:read-note
+npm run test:read-multinote
 ```
 
 ### Publishing to npm
