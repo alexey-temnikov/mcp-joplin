@@ -1,456 +1,302 @@
 # Joplin MCP Server
 
-This is a TypeScript implementation of an MCP (Model Context Protocol) server for Joplin.
+A TypeScript implementation of an MCP (Model Context Protocol) server for Joplin note-taking application, enabling AI assistants to interact with your notes.
 
-## Installation
+## Capabilities Overview
+
+### 📁 **Navigation & Discovery**
+```
+"List all my notebooks"
+→ Shows complete notebook hierarchy with IDs
+
+"Search for notes about machine learning"
+→ Returns matching notes with snippets and locations
+
+"Show me all notes in my Work notebook"
+→ Displays all notes within a specific notebook
+```
+
+### 📖 **Reading Content**
+```
+"Read my note about project planning"
+→ Shows full content with metadata
+
+"Read these three notes about the same topic"
+→ Batch reads multiple notes simultaneously
+```
+
+### ✏️ **Creating & Editing**
+```
+"Create a meeting note in my Work notebook"
+→ Creates new note with specified content and location
+
+"Update my todo list to mark task as complete"
+→ Modifies existing note content or moves between notebooks
+
+"Import this markdown file as a new note"
+→ Converts external markdown files into Joplin notes
+```
+
+### 🗑️ **Management**
+```
+"Delete that old draft note"
+→ Removes notes (safely to trash by default)
+```
+
+## Quick Navigation
+
+- **Getting Started** → [Tutorial](#tutorial-getting-started)
+- **Solve Problems** → [How-to Guides](#how-to-guides)
+- **Look Up Details** → [Reference](#reference)
+- **Learn More** → [Explanation](#explanation)
+
+---
+
+## Tutorial: Getting Started
+
+*Learning-oriented: Your first steps with the Joplin MCP Server*
+
+### Prerequisites
+
+- Joplin desktop application installed and running
+- Node.js and npm installed
+- Joplin Web Clipper enabled
+
+### Step 1: Enable Joplin API
+
+1. Open Joplin desktop application
+2. Go to **Tools > Options > Web Clipper**
+3. Copy your authorization token (you'll need this later)
+4. Note the port number (default: 41184)
+
+### Step 2: Install and Setup
 
 ```bash
+# Clone or download the project
+git clone [repository-url]
+cd joplin-mcp-server
+
+# Install dependencies
 npm install
+
+# Build the project
 npm run build
+
+# Make it globally available
 npm link
 ```
 
-## Configuration
+### Step 3: Configure Your Environment
 
-Create a `.env` file with the following variables:
+Create a `.env` file in the project root:
 
-```
+```env
 JOPLIN_PORT=41184
-JOPLIN_TOKEN=your_joplin_token
+JOPLIN_TOKEN=your_joplin_token_here
 LOG_LEVEL=info
 ```
 
-You can find your Joplin token in the Joplin desktop app under:
-Tools > Options > Web Clipper
+### Step 4: Test Your Setup
 
-## Usage
-
-### Local Development
-
-Start the server in development mode:
+Start the server to verify everything works:
 
 ```bash
-npm run dev
-```
-
-For production build:
-
-```bash
-npm run build
 npm start
 ```
 
-You can also specify a custom environment file:
+You should see output indicating the server has started successfully.
 
-```bash
-npm start -- --env-file .env.custom
+### Step 5: Use with an AI Assistant
+
+Configure your AI tool (like Claude or Cursor) to use the MCP server:
+
+```json
+{
+  "joplin": {
+    "command": "npx",
+    "args": ["joplin-mcp", "--env-file", "/path/to/your/.env"]
+  }
+}
 ```
 
-### Using npx (Recommended)
+### Your First Commands
 
-After publishing to npm or calling `npm link`, you can use npx to run the server without installation:
+Try these basic operations to get familiar:
+
+1. **See your notebooks**: Ask your AI to list all notebooks
+2. **Search for notes**: Search for a specific topic
+3. **Read a note**: Open and read a specific note
+4. **Create a note**: Make a new note in a notebook
+
+**Congratulations!** You've successfully set up the Joplin MCP Server. Your AI assistant can now read, search, and manage your Joplin notes.
+
+---
+
+## How-to Guides
+
+*Problem-oriented: Step-by-step solutions for common tasks*
+
+### How to Install Using npx (Recommended)
 
 ```bash
-# Using command line arguments
+# Direct installation and usage
 npx joplin-mcp --port 41184 --token your_joplin_token
 
 # Using environment file
 npx joplin-mcp --env-file /path/to/your/.env
-
-# Mixed approach (args override env file)
-npx joplin-mcp --env-file .env --port 41185
 ```
 
-### Command Line Options
+### How to Configure Different AI Tools
 
-```
-OPTIONS:
-  --env-file <file>    Load environment variables from file
-  --port <port>        Joplin port (default: 41184)
-  --token <token>      Joplin API token
-  --help, -h           Show help message
-```
-
-### MCP Client Configuration
-
-Usage in Augment Code:
+#### Augment Code
 ```
 name: joplin
 command: npx joplin-mcp --port 41184 --token your_token
 ```
 
-Usage in mcp.json (Cursor and other tools):
+#### Cursor (mcp.json)
 ```json
 {
   "joplin": {
     "command": "npx",
-    "args": [
-      "joplin-mcp",
-      "--port",
-      "41184",
-      "--token",
-      "your_joplin_token"
-    ]
+    "args": ["joplin-mcp", "--env-file", "/path/to/your/.env"]
   }
 }
 ```
 
-Or using environment file:
-```json
-{
-  "joplin": {
-    "command": "npx",
-    "args": [
-      "joplin-mcp",
-      "--env-file",
-      "/path/to/your/.env"
-    ]
-  }
-}
+### How to Search and Read Multiple Notes
+
+1. **Search for notes**: Use search to find notes by keyword
+2. **Get note IDs**: Copy the note IDs from search results
+3. **Read multiple**: Use `read_multinote` with an array of IDs
+
+```
+# Example workflow with AI assistant:
+"Search for notes about 'project planning'"
+"Read all notes with IDs: ['abc123', 'def456', 'ghi789']"
 ```
 
-### Logging
+### How to Organize Notes into Notebooks
 
-The server logs all incoming commands and outgoing responses. Logs are stored in two places:
+1. **List existing notebooks**: See your current structure
+2. **Create note**: Specify target notebook with `parent_id`
+3. **Move note**: Update existing note with new `parent_id`
 
-1. **Console output**: Basic information is displayed in the console
-2. **Log files**: Detailed logs are saved in the `logs` directory with timestamps
+### How to Import Markdown Files
 
-You can adjust the log level by setting the `LOG_LEVEL` environment variable:
+1. **Prepare your markdown file**: Ensure it's properly formatted
+2. **Choose target notebook**: Get the notebook ID where you want to import
+3. **Import**: Use the `import_markdown` command with file path and notebook ID
+
+### How to Set Up Development Environment
 
 ```bash
-LOG_LEVEL=debug npm start
-```
+# Development mode with auto-reload
+npm run dev
 
-Available log levels (from most to least verbose):
-- `debug`: All messages including detailed command and response data
-- `info`: Standard operational messages (default)
-- `warn`: Warnings and errors only
-- `error`: Only error messages
-
-## Available Tools
-
-### list_notebooks
-
-Retrieves the complete notebook hierarchy from Joplin.
-
-```
-# Example output:
-Notebook 1 (id: "abc123")
-  Subnotebook 1.1 (id: "def456")
-  Subnotebook 1.2 (id: "ghi789")
-Notebook 2 (id: "jkl012")
-```
-
-### search_notes
-
-Searches for notes in Joplin and returns matching notebooks.
-
-**Parameters:**
-- `query`: The search query string
-
-```
-# Example usage:
-search_notes query="project meeting"
-
-# Example output:
-Found 2 notes matching query: "project meeting"
-NOTE: To read a notebook, use the notebook ID (not the note title)
-
-- Note: "Weekly Project Meeting" (note_id: "abc123")
-  Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-  Updated: 3/15/2025, 10:30:45 AM
-  Snippet: Notes from our weekly project meeting. Topics discussed: timeline, resources, next steps...
-  To read this notebook: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
-
-- Note: "Project Kickoff Meeting" (note_id: "def456")
-  Notebook: "Projects" (notebook_id: "72b1c45d89ef3212a67b98f4e5d23a1b")
-  Updated: 3/10/2025, 2:15:30 PM
-  Snippet: Initial project meeting with stakeholders. Key decisions: project scope, team members...
-  To read this notebook: read_notebook notebook_id="72b1c45d89ef3212a67b98f4e5d23a1b"
-```
-
-> **Important**: Note the difference between note titles and IDs. When using the `read_notebook` command, you must use the notebook ID (a long alphanumeric string), not the notebook title.
-
-### read_notebook
-
-Reads the contents of a specific notebook.
-
-**Parameters:**
-- `notebook_id`: The ID of the notebook to read
-
-```
-# Example usage:
-read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
-
-# Example output:
-# Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-Contains 3 notes:
-NOTE: This is showing the contents of notebook "Work", not a specific note.
-
-- Note: "Weekly Project Meeting" (note_id: "def456")
-  Updated: 3/15/2025, 10:30:45 AM
-
-- ✅ Note: "Call client" (note_id: "ghi789")
-  Updated: 3/14/2025, 3:45:12 PM
-
-- ☐ Note: "Prepare presentation" (note_id: "jkl012")
-  Updated: 3/13/2025, 9:20:33 AM
-```
-
-> **Common Error**: If you try to use a note title (like "todo") instead of a notebook ID, you'll get an error. Always use the notebook ID (the long alphanumeric string) shown in the search results or notebook list.
-
-### read_note
-
-Reads the full content of a specific note.
-
-**Parameters:**
-- `note_id`: The ID of the note to read
-
-```
-# Example usage:
-read_note note_id="def456"
-
-# Example output:
-# Note: "Weekly Project Meeting"
-Note ID: def456
-Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-Created: 3/15/2025, 10:00:12 AM
-Updated: 3/15/2025, 10:30:45 AM
-
----
-
-# Weekly Project Meeting
-
-## Agenda
-1. Project status update
-2. Timeline review
-3. Resource allocation
-4. Next steps
-
-## Notes
-- Project is on track for Q2 delivery
-- Need to allocate additional resources to the UI team
-- Next meeting scheduled for next Friday
-
----
-
-Related commands:
-- To view the notebook containing this note: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
-- To search for more notes: search_notes query="your search term"
-```
-
-> **Note**: The `read_note` command shows the full content of a specific note, while the `read_notebook` command shows a list of notes in a notebook. Use `search_notes` to find notes and get their IDs.
-
-### read_multinote
-
-Reads the full content of multiple notes at once.
-
-**Parameters:**
-- `note_ids`: An array of note IDs to read
-
-```
-# Example usage:
-read_multinote note_ids=["def456", "ghi789", "jkl012"]
-
-# Example output:
-# Reading 3 notes
-
-## Note 1 of 3 (ID: def456)
-
-### Note: "Weekly Project Meeting"
-Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-Created: 3/15/2025, 10:00:12 AM
-Updated: 3/15/2025, 10:30:45 AM
-
----
-
-# Weekly Project Meeting
-
-## Agenda
-1. Project status update
-2. Timeline review
-
----
-
-## Note 2 of 3 (ID: ghi789)
-
-### Note: "Call client"
-Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-Status: Completed
-Created: 3/14/2025, 3:00:00 PM
-Updated: 3/14/2025, 3:45:12 PM
-
----
-
-Discussed project timeline and next steps.
-Client is happy with progress.
-
----
-
-## Note 3 of 3 (ID: jkl012)
-
-### Note: "Prepare presentation"
-Notebook: "Work" (notebook_id: "58a0a29f68bc4141b49c99f5d367638a")
-Status: Not completed
-Due: 3/20/2025, 9:00:00 AM
-Created: 3/13/2025, 9:00:00 AM
-Updated: 3/13/2025, 9:20:33 AM
-
----
-
-# Presentation Outline
-- Introduction
-- Project overview
-- Timeline
-- Budget
-- Next steps
-
----
-
-# Summary
-Total notes requested: 3
-Successfully retrieved: 3
-```
-
-> **Tip**: When you search for notes or view a notebook, you'll see a suggestion for using `read_multinote` with the exact IDs of the notes found. This makes it easy to read multiple related notes at once.
-
-### create_note
-
-Creates a new note in Joplin.
-
-**Parameters:**
-- `title`: Title of the new note (required)
-- `body`: Content of the note in Markdown format (optional)
-- `parent_id`: ID of the parent notebook (optional)
-- `is_todo`: Whether this is a todo item (optional, default: false)
-
-```
-# Example usage:
-create_note title="Meeting Notes" body="# Meeting Notes\n\n- Discussed project timeline\n- Assigned tasks" parent_id="58a0a29f68bc4141b49c99f5d367638a" is_todo=false
-
-# Example output:
-# Note Created Successfully
-
-Note ID: abc123
-Title: Meeting Notes
-Type: Regular note
-Notebook: "Work" (58a0a29f68bc4141b49c99f5d367638a)
-
-## Related Commands
-- To view the created note: read_note note_id="abc123"
-- To view the notebook containing this note: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
-```
-
-### update_note
-
-Updates an existing note in Joplin.
-
-**Parameters:**
-- `note_id`: ID of the note to update (required)
-- `title`: New title for the note (optional)
-- `body`: New content for the note (optional)
-- `parent_id`: New parent notebook ID (optional)
-- `is_todo`: New todo status (optional)
-
-```
-# Example usage:
-update_note note_id="abc123" title="Updated Meeting Notes" body="# Updated Meeting Notes\n\n- Discussed project timeline\n- Assigned tasks\n- Set next meeting date"
-
-# Example output:
-# Note Updated Successfully
-
-Note ID: abc123
-Title: Updated Meeting Notes
-
-## Changes Made
-- Title: "Meeting Notes" → "Updated Meeting Notes"
-- Content was updated
-
-## Related Commands
-- To view the updated note: read_note note_id="abc123"
-```
-
-### delete_note
-
-Deletes a note from Joplin.
-
-**Parameters:**
-- `note_id`: ID of the note to delete (required)
-- `permanent`: Whether to permanently delete the note (optional, default: false)
-
-```
-# Example usage:
-delete_note note_id="abc123" permanent=false
-
-# Example output:
-# Note Deleted Successfully
-
-Note ID: abc123
-Title: Updated Meeting Notes
-Deletion type: Moved to trash
-
-Note: The note has been moved to the trash. It can be restored from within Joplin.
-```
-
-### import_markdown
-
-Imports a markdown file as a new note.
-
-**Parameters:**
-- `file_path`: Path to the markdown file (required)
-- `parent_id`: ID of the parent notebook (optional)
-
-```
-# Example usage:
-import_markdown file_path="/path/to/document.md" parent_id="58a0a29f68bc4141b49c99f5d367638a"
-
-# Example output:
-# Markdown File Imported Successfully
-
-Source file: /path/to/document.md
-Note ID: def456
-Title: Document Title
-Notebook: "Work" (58a0a29f68bc4141b49c99f5d367638a)
-
-## Content Preview
-```markdown
-# Document Title
-
-This is the beginning of the document content...
-```
-
-## Related Commands
-- To view the imported note: read_note note_id="def456"
-- To view the notebook containing this note: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
-```
-
-## Development
-
-### Running Tests
-
-Create a `.env.test.local` file with your test configuration (see `.env.test.example`), then run:
-
-```bash
-# Run all unit tests
+# Run specific tests
 npm test
-
-# Run individual test scripts
 npm run test:search
-npm run test:read-notebook
 npm run test:read-note
-npm run test:read-multinote
+
+# Build for production
+npm run build
 ```
 
-### Publishing to npm
+### How to Troubleshoot Common Issues
 
-To make this package available via npx:
+**Connection Failed**: Check Joplin is running and Web Clipper is enabled
+**Invalid Token**: Verify your token in Joplin's Web Clipper settings
+**Note Not Found**: Use notebook ID (long string) not notebook name
+**Permission Denied**: Ensure Joplin API is accessible on the specified port
 
-1. Update the version in `package.json`
-2. Run `npm run build` to compile TypeScript
-3. Run `npm publish`
+---
 
-Users can then run it with `npx joplin-mcp`
+## Reference
+
+*Information-oriented: Technical specifications and API details*
+
+### Available Commands
+
+| Command | Parameters | Description |
+|---------|------------|-------------|
+| `list_notebooks` | None | Get complete notebook hierarchy |
+| `search_notes` | `query` (string) | Find notes by keyword/phrase |
+| `read_notebook` | `notebook_id` (string) | View all notes in specific notebook |
+| `read_note` | `note_id` (string) | Read full content of single note |
+| `read_multinote` | `note_ids` (array) | Read multiple notes simultaneously |
+| `create_note` | `title` (required), `body`, `parent_id`, `is_todo` | Create new note |
+| `update_note` | `note_id` (required), `title`, `body`, `parent_id`, `is_todo` | Modify existing note |
+| `delete_note` | `note_id` (required), `permanent` (boolean) | Remove note |
+| `import_markdown` | `file_path` (required), `parent_id` | Import markdown file as note |
+
+### Command Line Options
+
+```
+--env-file <file>    Load environment variables from file
+--port <port>        Joplin port (default: 41184)
+--token <token>      Joplin API token
+--help, -h           Show help message
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `JOPLIN_PORT` | 41184 | Port where Joplin API is running |
+| `JOPLIN_TOKEN` | None | Joplin API authorization token |
+| `LOG_LEVEL` | info | Logging verbosity (debug, info, warn, error) |
+
+### Response Formats
+
+#### Search Results
+```
+Found X notes matching query: "search term"
+
+- Note: "Title" (note_id: "abc123")
+  Notebook: "Notebook Name" (notebook_id: "def456")
+  Updated: MM/DD/YYYY, HH:MM:SS AM/PM
+  Snippet: Preview of note content...
+```
+
+#### Note Content
+```
+# Note: "Title"
+Note ID: abc123
+Notebook: "Notebook Name" (notebook_id: "def456")
+Created: MM/DD/YYYY, HH:MM:SS AM/PM
+Updated: MM/DD/YYYY, HH:MM:SS AM/PM
+
+---
+[Full note content in markdown]
+---
+```
+
+### Error Codes
+
+- **404**: Note or notebook not found
+- **403**: Invalid or missing authorization token
+- **500**: Joplin connection failed
+- **400**: Invalid parameters provided
+
+### Log Files
+
+Logs are stored in the `logs` directory with timestamps:
+- Console output: Basic operational information
+- File logs: Detailed command and response data
+
+---
+### Architecture Overview
+
+The system consists of three main components:
+
+1. **Joplin Desktop App**: Your note storage and management application
+2. **MCP Server**: This TypeScript application that translates between AI requests and Joplin's API
+3. **AI Assistant**: The tool that makes requests to read, search, and modify your notes
+
+```
+AI Assistant ←→ MCP Server ←→ Joplin API ←→ Your Notes
+```
 
 ## License
 
