@@ -65,7 +65,7 @@ describe('ReadNotebook', () => {
     // Check that the notebook was read correctly
     assert.ok(result.includes('Notebook:'), 'Result should include notebook title');
     assert.ok(result.includes(testNotebookId), 'Result should include notebook ID');
-    assert.ok(result.includes('Test Note in Notebook'), 'Result should include the note title');
+    assert.ok(result.includes('Test Note in Notebook'), 'Result should include the note title. Received: ' + result);
   });
 
   it('returns an error for non-existent notebook ID', async () => {

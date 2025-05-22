@@ -24,8 +24,8 @@ class ReadNotebook {
       
       // Get notes in the notebook
       const notes = await this.apiClient.get<{ items: JoplinNote[] }>(
-        '/notes', 
-        { query: { folder_id: notebookId, fields: 'id,title,updated_time,is_todo,todo_completed,todo_due' } }
+        `/folders/${notebookId}/notes`,
+        { query: { fields: 'id,title,updated_time,is_todo,todo_completed,todo_due' } }
       );
 
       if (!notes.items || notes.items.length === 0) {

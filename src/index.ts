@@ -8,7 +8,17 @@ import { fileURLToPath } from 'url';
 import logger from './lib/logger.js';
 import parseArgs from './lib/parse-args.js';
 import JoplinAPIClient from './lib/joplin-api-client.js';
-import { ListNotebooks, SearchNotes, ReadNotebook, ReadNote, ReadMultiNote } from './lib/tools/index.js';
+import { 
+  ListNotebooks, 
+  SearchNotes, 
+  ReadNotebook, 
+  ReadNote, 
+  ReadMultiNote,
+  UpdateNote,
+  DeleteNote,
+  CreateNote,
+  ImportMarkdown
+} from './lib/tools/index.js';
 
 /**
  * JoplinMcpServer exposes Joplin functionality as an MCP server
@@ -67,7 +77,7 @@ class JoplinMcpServer {
     this.server.registerTool(
       'list_notebooks',
       {
-        description: 'Retrieve the complete notebook hierarchy from Joplin'
+        description: 'Retrieves the complete notebook hierarchy from Joplin'
       },
       async () => {
         const result = await new ListNotebooks(this.apiClient).call();
@@ -131,6 +141,83 @@ class JoplinMcpServer {
       },
       async (args) => {
         const result = await new ReadMultiNote(this.apiClient).call(args.note_ids);
+        return {
+          content: [{ type: 'text', text: result }]
+        };
+      }
+    );
+
+    // Register the update_note tool
+    this.server.registerTool(
+      'update_note',
+      {
+        description: 'Update an existing note in Joplin',
+        inputSchema: {
+          note_id: z.string(),
+          title: z.string().optional(),
+          body: z.string().optional(),
+          parent_id: z.string().optional(),
+          is_todo: z.boolean().optional()
+        }
+      },
+      async (args) => {
+        const result = await new UpdateNote(this.apiClient).call(args);
+        return {
+          content: [{ type: 'text', text: result }]
+        };
+      }
+    );
+
+    // Register the delete_note tool
+    this.server.registerTool(
+      'delete_note',
+      {
+        description: 'Delete a note from Joplin',
+        inputSchema: {
+          note_id: z.string(),
+          permanent: z.boolean().optional()
+        }
+      },
+      async (args) => {
+        const result = await new DeleteNote(this.apiClient).call(args);
+        return {
+          content: [{ type: 'text', text: result }]
+        };
+      }
+    );
+
+    // Register the create_note tool
+    this.server.registerTool(
+      'create_note',
+      {
+        description: 'Create a new note in Joplin',
+        inputSchema: {
+          title: z.string(),
+          body: z.string().optional(),
+          parent_id: z.string().optional(),
+          is_todo: z.boolean().optional()
+        }
+      },
+      async (args) => {
+        const result = await new CreateNote(this.apiClient).call(args);
+        return {
+          content: [{ type: 'text', text: result }]
+        };
+      }
+    );
+
+    // Register the import_markdown tool
+    this.server.registerTool(
+      'import_markdown',
+      {
+        description: 'Import a markdown file as a new note',
+        inputSchema: {
+          file_path: z.string(),
+          parent_id: z.string().optional()
+        }
+      },
+      async (args) => {
+        const result = await new ImportMarkdown(this.apiClient).call(args);
         return {
           content: [{ type: 'text', text: result }]
         };

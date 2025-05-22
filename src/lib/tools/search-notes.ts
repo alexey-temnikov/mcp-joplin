@@ -24,8 +24,8 @@ class SearchNotes {
 
       // Search for notes matching the query
       const searchResults = await this.apiClient.get<{ items: SearchResult[] }>(
-        '/search', 
-        { query: { query, type: 'note', fields: 'id,title,parent_id,updated_time,body' } }
+        `/search?query=${query}`,
+        { query: { query: query, type: 'note', fields: 'id,title,parent_id,updated_time,body' } }
       );
 
       if (!searchResults.items || searchResults.items.length === 0) {

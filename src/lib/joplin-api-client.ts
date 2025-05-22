@@ -52,11 +52,14 @@ class JoplinAPIClient {
 
   async get<T>(path: string, options: RequestOptions = {}): Promise<T> {
     try {
+      let cfg = {baseURL: `${this.baseURL}`, url: path, params: this.requestOptions(options).query}
+      let cfg_uri = axios.getUri(cfg)
+      const response = await axios.request(cfg);
       const { data } = await axios.get<T>(
         `${this.baseURL}${path}`,
         {
           params: this.requestOptions(options).query
-        }
+        },
       );
       return data;
     } catch (error) {

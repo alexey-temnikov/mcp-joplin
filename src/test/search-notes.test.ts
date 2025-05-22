@@ -52,10 +52,11 @@ describe('SearchNotes', () => {
     );
 
     // Search for the note
+    await new Promise(resolve => setTimeout(resolve, 500));
     const result = await searchNotes.call(uniqueTitle);
     
     // Check that the search found our note
-    assert.ok(result.includes('Found'), 'Search result should indicate notes were found');
+    assert.ok(result.includes('Found'), 'Search result should indicate notes were found. Received: ' + result);
     assert.ok(result.includes(uniqueTitle), 'Search result should include the note title');
   });
 });

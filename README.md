@@ -315,6 +315,116 @@ Successfully retrieved: 3
 
 > **Tip**: When you search for notes or view a notebook, you'll see a suggestion for using `read_multinote` with the exact IDs of the notes found. This makes it easy to read multiple related notes at once.
 
+### create_note
+
+Creates a new note in Joplin.
+
+**Parameters:**
+- `title`: Title of the new note (required)
+- `body`: Content of the note in Markdown format (optional)
+- `parent_id`: ID of the parent notebook (optional)
+- `is_todo`: Whether this is a todo item (optional, default: false)
+
+```
+# Example usage:
+create_note title="Meeting Notes" body="# Meeting Notes\n\n- Discussed project timeline\n- Assigned tasks" parent_id="58a0a29f68bc4141b49c99f5d367638a" is_todo=false
+
+# Example output:
+# Note Created Successfully
+
+Note ID: abc123
+Title: Meeting Notes
+Type: Regular note
+Notebook: "Work" (58a0a29f68bc4141b49c99f5d367638a)
+
+## Related Commands
+- To view the created note: read_note note_id="abc123"
+- To view the notebook containing this note: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
+```
+
+### update_note
+
+Updates an existing note in Joplin.
+
+**Parameters:**
+- `note_id`: ID of the note to update (required)
+- `title`: New title for the note (optional)
+- `body`: New content for the note (optional)
+- `parent_id`: New parent notebook ID (optional)
+- `is_todo`: New todo status (optional)
+
+```
+# Example usage:
+update_note note_id="abc123" title="Updated Meeting Notes" body="# Updated Meeting Notes\n\n- Discussed project timeline\n- Assigned tasks\n- Set next meeting date"
+
+# Example output:
+# Note Updated Successfully
+
+Note ID: abc123
+Title: Updated Meeting Notes
+
+## Changes Made
+- Title: "Meeting Notes" → "Updated Meeting Notes"
+- Content was updated
+
+## Related Commands
+- To view the updated note: read_note note_id="abc123"
+```
+
+### delete_note
+
+Deletes a note from Joplin.
+
+**Parameters:**
+- `note_id`: ID of the note to delete (required)
+- `permanent`: Whether to permanently delete the note (optional, default: false)
+
+```
+# Example usage:
+delete_note note_id="abc123" permanent=false
+
+# Example output:
+# Note Deleted Successfully
+
+Note ID: abc123
+Title: Updated Meeting Notes
+Deletion type: Moved to trash
+
+Note: The note has been moved to the trash. It can be restored from within Joplin.
+```
+
+### import_markdown
+
+Imports a markdown file as a new note.
+
+**Parameters:**
+- `file_path`: Path to the markdown file (required)
+- `parent_id`: ID of the parent notebook (optional)
+
+```
+# Example usage:
+import_markdown file_path="/path/to/document.md" parent_id="58a0a29f68bc4141b49c99f5d367638a"
+
+# Example output:
+# Markdown File Imported Successfully
+
+Source file: /path/to/document.md
+Note ID: def456
+Title: Document Title
+Notebook: "Work" (58a0a29f68bc4141b49c99f5d367638a)
+
+## Content Preview
+```markdown
+# Document Title
+
+This is the beginning of the document content...
+```
+
+## Related Commands
+- To view the imported note: read_note note_id="def456"
+- To view the notebook containing this note: read_notebook notebook_id="58a0a29f68bc4141b49c99f5d367638a"
+```
+
 ## Development
 
 ### Running Tests
