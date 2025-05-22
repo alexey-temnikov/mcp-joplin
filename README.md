@@ -6,6 +6,8 @@ This is a TypeScript implementation of an MCP (Model Context Protocol) server fo
 
 ```bash
 npm install
+npm run build
+npm link
 ```
 
 ## Configuration
@@ -46,17 +48,17 @@ npm start -- --env-file .env.custom
 
 ### Using npx (Recommended)
 
-After publishing to npm, you can use npx to run the server without installation:
+After publishing to npm or calling `npm link`, you can use npx to run the server without installation:
 
 ```bash
 # Using command line arguments
-npx joplin-mcp-server --port 41184 --token your_joplin_token
+npx joplin-mcp --port 41184 --token your_joplin_token
 
 # Using environment file
-npx joplin-mcp-server --env-file /path/to/your/.env
+npx joplin-mcp --env-file /path/to/your/.env
 
 # Mixed approach (args override env file)
-npx joplin-mcp-server --env-file .env --port 41185
+npx joplin-mcp --env-file .env --port 41185
 ```
 
 ### Command Line Options
@@ -74,7 +76,7 @@ OPTIONS:
 Usage in Augment Code:
 ```
 name: joplin
-command: npx joplin-mcp-server --port 41184 --token your_token
+command: npx joplin-mcp --port 41184 --token your_token
 ```
 
 Usage in mcp.json (Cursor and other tools):
@@ -83,7 +85,7 @@ Usage in mcp.json (Cursor and other tools):
   "joplin": {
     "command": "npx",
     "args": [
-      "joplin-mcp-server",
+      "joplin-mcp",
       "--port",
       "41184",
       "--token",
@@ -99,7 +101,7 @@ Or using environment file:
   "joplin": {
     "command": "npx",
     "args": [
-      "joplin-mcp-server",
+      "joplin-mcp",
       "--env-file",
       "/path/to/your/.env"
     ]
@@ -338,7 +340,7 @@ To make this package available via npx:
 2. Run `npm run build` to compile TypeScript
 3. Run `npm publish`
 
-Users can then run it with `npx joplin-mcp-server`
+Users can then run it with `npx joplin-mcp`
 
 ## License
 
