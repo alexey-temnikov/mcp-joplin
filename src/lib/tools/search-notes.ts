@@ -5,7 +5,8 @@ interface SearchResult {
   title: string;
   parent_id: string;
   updated_time: number;
-  snippet: string;
+  body?: string;
+  snippet?: string;
   notebook_title?: string;
 }
 
@@ -24,7 +25,7 @@ class SearchNotes {
 
       // Search for notes matching the query
       const searchResults = await this.apiClient.get<{ items: SearchResult[] }>(
-        `/search?query=${query}`,
+        '/search',
         { query: { query: query, type: 'note', fields: 'id,title,parent_id,updated_time,body' } }
       );
 
@@ -58,12 +59,13 @@ class SearchNotes {
         const updatedDate = new Date(note.updated_time).toLocaleString();
         
         // Create a snippet from the note body (first 100 characters)
-        const snippet = this.createSnippet(note.snippet || '');
+        const snippet = this.createSnippet(note.body || note.snippet || '');
         
         resultLines.push(`- Note: "${note.title}" (note_id: "${note.id}")`);
         resultLines.push(`  Notebook: "${notebookTitle}" (notebook_id: "${note.parent_id}")`);
         resultLines.push(`  Updated: ${updatedDate}`);
         resultLines.push(`  Snippet: ${snippet}`);
+        resultLines.push(`  To read this note: read_note note_id="${note.id}"`);
         resultLines.push(`  To read this notebook: read_notebook notebook_id="${note.parent_id}"`);
         
         if (index < searchResults.items.length - 1) {

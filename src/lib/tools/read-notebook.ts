@@ -23,24 +23,24 @@ class ReadNotebook {
       const notebook = await this.apiClient.get<NotebookInfo>(`/folders/${notebookId}`);
       
       // Get notes in the notebook
-      const notes = await this.apiClient.get<{ items: JoplinNote[] }>(
+      const notes = await this.apiClient.getAllItems<JoplinNote>(
         `/folders/${notebookId}/notes`,
-        { query: { fields: 'id,title,updated_time,is_todo,todo_completed,todo_due' } }
+        { query: { fields: 'id,title,updated_time,is_todo,todo_completed,todo_due', order_by: 'updated_time', order_dir: 'DESC' } }
       );
 
-      if (!notes.items || notes.items.length === 0) {
+      if (!notes || notes.length === 0) {
         return `# Notebook: "${notebook.title}" (notebook_id: "${notebookId}")\nThis notebook is empty.`;
       }
 
       // Format the results
       const resultLines = [
         `# Notebook: "${notebook.title}" (notebook_id: "${notebookId}")`,
-        `Contains ${notes.items.length} notes:`,
+        `Contains ${notes.length} notes:`,
         'NOTE: This is showing the contents of notebook "' + notebook.title + '", not a specific note.\n'
       ];
 
       // Sort notes by updated_time (newest first)
-      const sortedNotes = [...notes.items].sort((a, b) => b.updated_time - a.updated_time);
+      const sortedNotes = [...notes].sort((a, b) => b.updated_time - a.updated_time);
 
       sortedNotes.forEach((note, index) => {
         const updatedDate = new Date(note.updated_time).toLocaleString();
