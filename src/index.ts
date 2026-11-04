@@ -53,7 +53,7 @@ class JoplinMcpServer {
     // Create the MCP server
     this.server = new McpServer({
       name: 'joplin-mcp-server',
-      version: '1.0.0'
+      version: '1.0.1'
     });
 
     // Create logs directory if it doesn't exist
@@ -227,7 +227,7 @@ class JoplinMcpServer {
 
   async run() {
     // Log server startup
-    logger.info('Starting MCP server (version 1.0.0)');
+    logger.info('Starting MCP server (version 1.0.1)');
     logger.info(`Log file: ${this.logFile}`);
 
     // Create a custom transport wrapper to log commands and responses
